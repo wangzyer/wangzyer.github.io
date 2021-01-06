@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Wangzyer</title><meta description="深入HTTP和性能优化HTTP协议是互联网上采用最普遍的协议，也是我们前端开发过程中遇到最多的网络协议，几乎所有的资源请求、数据获取、用户交互都是使用HTTP，所以深入理解HTTP对于性能优化是极为重要。 主要从下面四个角度来深入HTTP  目前主流HTTP发展历程和各个版本 HTTP相关协议如TCP、UDP、TLS 目前主要版本存在问题和优化方法 未来的HTTP"><meta property="og:type" content="blog"><meta property="og:title" content="Wangzyer"><meta property="og:url" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><meta property="og:site_name" content="Wangzyer"><meta property="og:description" content="深入HTTP和性能优化HTTP协议是互联网上采用最普遍的协议，也是我们前端开发过程中遇到最多的网络协议，几乎所有的资源请求、数据获取、用户交互都是使用HTTP，所以深入理解HTTP对于性能优化是极为重要。 主要从下面四个角度来深入HTTP  目前主流HTTP发展历程和各个版本 HTTP相关协议如TCP、UDP、TLS 目前主要版本存在问题和优化方法 未来的HTTP"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/HTTP2-graphic.png"><meta property="og:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/tls.png"><meta property="og:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/6.png"><meta property="og:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/gzip.png"><meta property="og:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/stream.png"><meta property="og:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/tcp-chain-streams.png"><meta property="og:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/structure.png"><meta property="og:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/process.png"><meta property="og:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/hxns1tkwgd.png"><meta property="og:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/quic-chain-streams.png"><meta property="article:published_time" content="2021-01-05T16:00:00.000Z"><meta property="article:modified_time" content="2021-01-06T15:03:39.117Z"><meta property="article:author" content="Wangzyer"><meta property="article:tag" content="计算机网络"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/HTTP2-graphic.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"},"headline":"Wangzyer","image":["http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/HTTP2-graphic.png","http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/tls.png","http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/6.png","http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/gzip.png","http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/stream.png","http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/tcp-chain-streams.png","http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/structure.png","http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/process.png","http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/hxns1tkwgd.png","http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/quic-chain-streams.png"],"datePublished":"2021-01-05T16:00:00.000Z","dateModified":"2021-01-06T15:03:39.117Z","author":{"@type":"Person","name":"Wangzyer"},"description":"深入HTTP和性能优化HTTP协议是互联网上采用最普遍的协议，也是我们前端开发过程中遇到最多的网络协议，几乎所有的资源请求、数据获取、用户交互都是使用HTTP，所以深入理解HTTP对于性能优化是极为重要。 主要从下面四个角度来深入HTTP  目前主流HTTP发展历程和各个版本 HTTP相关协议如TCP、UDP、TLS 目前主要版本存在问题和优化方法 未来的HTTP"}</script><link rel="canonical" href="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.13.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.jpeg" alt="Wangzyer" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/wangzyer"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-01-05T16:00:00.000Z" title="2021-01-05T16:00:00.000Z">2021-01-06</time>发表</span><span class="level-item"><time dateTime="2021-01-06T15:03:39.117Z" title="2021-01-06T15:03:39.117Z">2021-01-06</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/%E5%9F%BA%E7%A1%80/">基础</a></span><span class="level-item">33 分钟读完 (大约4985个字)</span></div></div><h1 class="title is-3 is-size-4-mobile"> </h1><div class="content"><h1 id="深入HTTP和性能优化"><a href="#深入HTTP和性能优化" class="headerlink" title="深入HTTP和性能优化"></a>深入HTTP和性能优化</h1><p>HTTP协议是互联网上采用<strong>最普遍</strong>的协议，也是我们前端开发过程中遇到最多的网络协议，几乎所有的资源请求、数据获取、用户交互都是使用HTTP，所以深入理解HTTP对于性能优化是极为重要。</p>
+<p>主要从下面四个角度来深入HTTP</p>
+<ul>
+<li>目前主流HTTP发展历程和各个版本</li>
+<li>HTTP相关协议如TCP、UDP、TLS</li>
+<li>目前主要版本存在问题和优化方法</li>
+<li>未来的HTTP<a id="more"></a> 
+
+</li>
+</ul>
+<h2 id="发展历程"><a href="#发展历程" class="headerlink" title="发展历程"></a>发展历程</h2><p><img src="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/HTTP2-graphic.png"><br>HTTP从1991年定稿到目前已经经历了<strong>4个</strong>主要版本迭代，从最初的只有一个简单的get请求到现在已经十分复杂，推动它一直更新迭代的动力是web应用发展越来越复杂，对web应用的<strong>性能的要求</strong>也越来越高。</p>
+<h3 id="HTTP-0-9"><a href="#HTTP-0-9" class="headerlink" title="HTTP/0.9"></a>HTTP/0.9</h3><p>HTTP 0.9是HTTP的第一个版本，1991年发布，该版本只有一个get命令，没有首部等信息。</p>
+<p>HTTP 0.9实现的主要功能：</p>
+<ul>
+<li>客户端/服务器 -&gt; 请求/响应协议</li>
+<li>运行在TCP/IP之上</li>
+<li>传输HTML</li>
+<li>每次请求后会关闭TCP连接</li>
+</ul>
+<h3 id="HTTP-1-0"><a href="#HTTP-1-0" class="headerlink" title="HTTP/1.0"></a>HTTP/1.0</h3><p>由于人们对新兴Web的需求越来越高，HTTP0.9很多根本性不足的问题暴露出来，HTTP1.0也就随即而生，他与我们目前的HTTP报文相比看上去已经差别不大。</p>
+<p>HTTP1.0新增的主要功能：</p>
+<ul>
+<li>增加了很多请求方法如：POST、PUT</li>
+<li>请求可以有多行首部字段构成</li>
+<li>响应对象前面添加了一个响应状态</li>
+<li>响应对象由换行符分隔首部字段</li>
+<li>响应对象不局限于HTML</li>
+</ul>
+<h3 id="HTTP-1-1"><a href="#HTTP-1-1" class="headerlink" title="HTTP/1.1"></a>HTTP/1.1</h3><p>HTTP1.1是在HTTP1.0的基础上增加了一些功能来优化网络连接。</p>
+<p>HTTP1.1新增的主要功能：</p>
+<ul>
+<li>持久化TCP连接</li>
+<li>HTTP管道</li>
+<li>分块传输编码</li>
+<li>更好的缓存机制</li>
+</ul>
+<p>当然HTTP/1.1新增的特性很多，这只是其中几个主要的功能</p>
+<h3 id="HTTP-2"><a href="#HTTP-2" class="headerlink" title="HTTP/2"></a>HTTP/2</h3><p>HTTP/2将HTTP/1.1存在的问题集中在协议<strong>内部解决</strong>，在<strong>不改动HTTP1.1语法语义</strong>的基础上将解决方案内置在传出层中进行优化应用、改进性能。</p>
+<p>HTTP2新增的主要功能：</p>
+<ul>
+<li>多路复用</li>
+<li>多请求与响应</li>
+<li>首部压缩</li>
+<li>服务器推送</li>
+<li>请求优先级</li>
+</ul>
+<blockquote>
+<p>2018年初，最热的前一千个网站中约40%运行着HTTP/2，而在Firefox发出的HTTPS请求中，约70%的请求得到了HTTP/2响应。主流的浏览器、服务器以及代理都支持了HTTP/2</p>
+</blockquote>
+<h2 id="HTTP相关"><a href="#HTTP相关" class="headerlink" title="HTTP相关"></a>HTTP相关</h2><p>一个HTTP网络请求并不知有HTTP协议的参与，它只是在应用层协议中的协议，HTTP性能上暴露出来的问题和解决方案有些并不在HTTP协议本身中，需要我们去知道在整个网络传输过程中其他的协议内容，从<strong>整体的角度</strong>来考虑性能的优化和提升。</p>
+<p>HTTP协议建立在TCP/IP协议上，通过TLS实现加密传输：IP / TCP / TLS / HTTP</p>
+<h3 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h3><p>传输控制协议是为了在<strong>不可靠的通信连接</strong>上，提供逻辑上的<strong>可靠</strong>信道服务的协议。HTTP是基于TCP的应用层协议，所以TCP实现的功能和出现的问题HTTP也都有。</p>
+<p>TCP实现的功能：</p>
+<ul>
+<li>面向连接、全双工</li>
+<li>保证数据完整性、顺序</li>
+<li>流量控制</li>
+<li>丢失重发</li>
+</ul>
+<p>TCP会做一些方案来保证上面功能的实现，不可避免的会造成一些性能问题，如三次握手、慢启动等，但是后续可以通过对HTTP协议的改造和TCP的优化来减少这些影响。 </p>
+<h3 id="TLS"><a href="#TLS" class="headerlink" title="TLS"></a>TLS</h3><p>TLS是一个安全协议，通过HTTP+TLS就能形成HTTPS，通过加密可以保证我们传输过程中数据的隐私性、安全性、不可篡改从而保证我们的传输安全，但是这个是有性能代价的。目前主流（2020年）使用的是TLS1.2版本，使用公共密钥加密方法来进行密钥交换和加密。</p>
+<blockquote>
+<p>SSL协议起源于1994年，当时网景公司推出首版网页浏览器及HTTPS协议，用于加密的就是SSL。此后相继推出SSL2.0及3.0版本，1999年IETF将SSL标准化，即 RFC 2246 ，并将其命名为TLS。2006年和2008年又分别推出TLS1.1和TLS1.2版本。</p>
+</blockquote>
+<p><img src="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/tls.png"></p>
+<p>这里看到密钥的交换需要4次握手，从开始请求链接到最后真正传输数据有3RTT时间的准备，如果客户端和服务器相隔较远等可能会有几百ms的延迟这对用户体验的影响是很大的。</p>
+<h3 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h3><p>是用户数据报协议，与TCP一样是传输层协议，他与TCP区别就是只实现了传输层最基础的功能，几乎没有做什么特别的事情。这样的特点就会使起特别的轻量，这对于提升网络传输速度是诱人的，所以HTTP/3就搭建在了UDP协议之上，可靠的传输机制、流量控制等在应用层实现，实现了不修改当前网络基础设施的情况下提交网络性能。</p>
+<h2 id="HTTP的性能问题和优化"><a href="#HTTP的性能问题和优化" class="headerlink" title="HTTP的性能问题和优化"></a>HTTP的性能问题和优化</h2><p>往往ToC页面对性能要求的更高，响应时间能决定用户的去留和公司最后的利益。</p>
+<p>不同响应时间客户的感觉：<br>| 时间 | 感觉 |<br>| — | — |<br>| 0～100ms | 很快 |<br>| 100～300ms | 有一点点慢 |<br>| 300～1000ms | 机器在工作 |<br>| &gt;1000ms | 干点别的吧 |</p>
+<p>所以尤其是ToC页面对性能要求和最后盈利的关系是密切的，下面就从各个HTTP版本的角度来看各个版本的性能问题以及下个版本的优化方式。</p>
+<p><strong>大部分web应用的是性能瓶颈是延迟，不是带宽。</strong></p>
+<h3 id="HTTP-1-1的性能"><a href="#HTTP-1-1的性能" class="headerlink" title="HTTP/1.1的性能"></a>HTTP/1.1的性能</h3><p>HTTP/1.1是目前主流使用的HTTP协议版本，已经使用了很长的时间，很多公司目前都是HTTP/1.1和HTTP/2.0共存，所以知道它的特点、缺点、解决方案还是很重要的。HTTP/1.1新增的功能非常多这里列举了几个主要和常用的点。</p>
+<h4 id="持久化链接"><a href="#持久化链接" class="headerlink" title="持久化链接"></a>持久化链接</h4><p>HTTP/1.1是建立在TCP协议之上的，TCP协议是面向连接的服务，需要通过三次握手建立连接并且建立连接初期会有慢启动，所以建立一个新的TCP链接成本是比较大的。 既然建立比较大那么我们复用之前链接就可以提升性能了，这就是持久化链接。</p>
+<p>但是HTTP同一个TCP链接请求过程是：发送请求-&gt;接受响应 -&gt; 下一个HTTP请求。过程是<strong>串行</strong>的，这是HTTP设计机制，如果页面有很多请求那么这个过程是漫长的显然不可能这样。那么这个问题的解决方案就是同时开启多个TCP连接就可以并发请求资源，那么并发多少呢？在考虑用户性能和服务器压力后通常是<strong>6</strong>个，如果请求资源大于6那么就需要排队等待，所以HTTP/1.1就出现了<strong>队首阻塞问题</strong>。</p>
+<p><img src="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/6.png"></p>
+<h5 id="多域名"><a href="#多域名" class="headerlink" title="多域名"></a>多域名</h5><p>刚刚说到结合了用户体验和服务器压力单个域名设置的最大TCP链接并发数是6个，那么如果页面请求资源过多排队6个TCP链接对性能损害是大的。所以可以通过把静态资源<strong>分布在多个域名下</strong>就可以突破6个链接的限制从而实现多链接并发。</p>
+<h5 id="拼合"><a href="#拼合" class="headerlink" title="拼合"></a>拼合</h5><p>除了把资源部分在不同域名下，我们还可以将资源拼合成一个HTTP链接来实现资源请求数的减少，变相解决队首阻塞问题。通常会将多个js文件合并成一个，多个图片合成一个（雪碧图）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;s.thsi.cn&#x2F;js&#x2F;m&#x2F;common&#x2F;bridge.js + https:&#x2F;&#x2F;s.thsi.cn&#x2F;js&#x2F;m&#x2F;common&#x2F;zepto.js</span><br><span class="line"></span><br><span class="line">https:&#x2F;&#x2F;s.thsi.cn&#x2F;cb?js&#x2F;m&#x2F;common&#x2F;;bridge.js;zepto.js</span><br></pre></td></tr></table></figure>
+<p>但是这样也会存在一些问题比如拼合js中有一个改动就会缓存失效请求加载全部文件，图片合并只现实其中一小部分但需要把整张图片加载到内存中去。这就要根据具体的情况、资源等进行取舍。</p>
+<h4 id="管道化（多路复用）"><a href="#管道化（多路复用）" class="headerlink" title="管道化（多路复用）"></a>管道化（多路复用）</h4><p>刚刚说到了HTTP通过TCP的请求过程：发送请求-&gt;接受响应 -&gt; 下一个HTTP请求。那么这时候就可以想到那么我一次发送多个请求那么不是就可以复用TCP链路并且解决队首阻塞问题。这就是<strong>管道化</strong>：允许同时请求请求 -&gt; 多个响应，但是由于HTTP在服务器的机制需要处理完上一个请求后才能响应下一个，还是出现了队首阻塞问题只不过是<strong>把阻塞时间由客户端放到了服务器端</strong>，并且还加大了服务器的压力，所以HTTP/1.1的管道化并没有怎么推广和使用。 </p>
+<h4 id="缓存机制"><a href="#缓存机制" class="headerlink" title="缓存机制"></a>缓存机制</h4><p>缓存是加速响应的重要措施，如何提高缓存命中率、及时更新、灵活控制都是协议重点考虑的内容，HTTP/1.0通过Expires字段（一个绝对时间字符串）控制缓存，但是存在客户端时间不准确，时区等问题影响缓存效果，HTTP/1.1增加了Cache-Control、If-Modified-Since<br>Last-Modified、If-None-Match\ETag更灵活、准确的控制缓存。</p>
+<h4 id="压缩"><a href="#压缩" class="headerlink" title="压缩"></a>压缩</h4><p>可以通过压缩传输的内容来减少传输大小，提升传输效率。通过 Accept-Encoding 协商压缩格式。<br><img src="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/gzip.png"></p>
+<h3 id="HTTP-2的性能"><a href="#HTTP-2的性能" class="headerlink" title="HTTP/2的性能"></a>HTTP/2的性能</h3><p>我们看到HTTP/1.1还是存在很多的性能问题，有些可以通过一些方案来解决，但这并不能除去协议本身的问题，而且有些解决方案都是有所牺牲的，所以HTTP/2出现了。</p>
+<p>HTTP2的目的是通过支持请求和响应的<strong>多路复用</strong>来实现减少延迟，通过<strong>压缩头部</strong>降低额外开销，同时实现<strong>请求优先级</strong>和<strong>服务器推送</strong>的功能。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://http2.akamai.com/demo">HTTP/2: the Future of the Internet</a> 这是一个官方演示，可以明显的看出HTTP/2相比于HTTP/1.1的性能提升。</p>
+</blockquote>
+<h4 id="多路复用"><a href="#多路复用" class="headerlink" title="多路复用"></a>多路复用</h4><p>HTTP/2的优化主要都是建立在多路复用的基础上，所有<strong>同一个域名的来源请求都在同一个TCP连接下传输</strong>，通过了二进制分帧、请求优先级等来实现多路复用。</p>
+<h5 id="二进制分帧层"><a href="#二进制分帧层" class="headerlink" title="二进制分帧层"></a>二进制分帧层</h5><p>它定义了如何封装http消息并在客户端与服务器之间传输，类似于TLS，将原来以文本的方式分隔成了更小的<strong>消息</strong>和<strong>帧</strong>，并对他们采用二进制编码。</p>
+<p>要理解HTTP/2的多路复用需要知道以下几个概念：</p>
+<ul>
+<li><p>流<br>已建立的连接上的双向字节流</p>
+</li>
+<li><p>消息<br>与逻辑消息对用的完整的一系列数据帧</p>
+</li>
+<li><p>帧<br>http2通信的最小单位</p>
+<p><img src="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/stream.png"></p>
+</li>
+</ul>
+<h6 id="帧格式"><a href="#帧格式" class="headerlink" title="帧格式"></a>帧格式</h6><p>每个帧有32位的首部信息：</p>
+<ul>
+<li>16位表示长度</li>
+<li>8位类型，表示如何解释帧其余部分的内容</li>
+<li>8位标志</li>
+</ul>
+<p>根据类型不同可以知道如何解释剩下的内容如DATA：本帧用于传输http消息体，HEADERS: 传输流的首部也代表着一个新流的建立。</p>
+<h5 id="请求优先级"><a href="#请求优先级" class="headerlink" title="请求优先级"></a>请求优先级</h5><p>既然可以在同一个流中发送很多独立的帧，那么就需要按照某种规则优化发送帧的顺序，也就是优先级。每一个流都可以设置一个31比特的优先值：0最高 2^31-1最低。服务器和客户端则可以根据这个值以最优的方式发送消息和帧。</p>
+<h5 id="多向请求与响应"><a href="#多向请求与响应" class="headerlink" title="多向请求与响应"></a>多向请求与响应</h5><p>在HTTP/1.1中想要并行的响应多个请求，只能建立多个TCP连接，而HTTP2通过二进制分帧层则可以<strong>在同一个TCP中发送多个资源请求</strong>，客户端和服务器可以将多个请求分解成互不影响的帧然后乱序发送，在送达后根据流的ID进行组装，所在发送请求帧的同时也在返回响应帧，实现了请求响应的同时执行。</p>
+<h4 id="头部压缩"><a href="#头部压缩" class="headerlink" title="头部压缩"></a>头部压缩</h4><p>HTTP每次通信的都会携带一些首部信息，用于描述资源和客户端信息，但是这些首部中有很大一部分是重复的例如ua，cookies等，所以HTTP/2在服务器客户端各生成了一张<strong>首部表</strong>，如果本次请求的首部和表的的重复则不发送不然则替换，这样减少了头部字段的无效压缩。</p>
+<h4 id="服务器推送"><a href="#服务器推送" class="headerlink" title="服务器推送"></a>服务器推送</h4><p>HTTP/1.1只能一个请求一个响应，HTTP/2则实现了一个请求多个响应，服务器可以根据客户端请求内容<strong>推测</strong>客户端接下来会请求哪些资源然后逐一返回，这样就减少了客户端发送请求的时间。</p>
+<h4 id="队头阻塞"><a href="#队头阻塞" class="headerlink" title="队头阻塞"></a>队头阻塞</h4><p>我们刚刚看到HTTP/1.1很多性能问题是由于协议本身机制所引起的队头阻塞问题，那么HTTP/2解决了么？并没有完全解决，由于<strong>TCP传输是使用滑动窗口</strong>，如果某个TCP段丢失了那么需要等待，所以还是出现了对头阻塞问题，但问题已经不在HTTP协议上了。所以下一个版本替换的目标就在应用层协议上了。</p>
+<p><img src="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/tcp-chain-streams.png"></p>
+<h2 id="HTTP-3"><a href="#HTTP-3" class="headerlink" title="HTTP/3"></a>HTTP/3</h2><p>HTTP/2已经解决了HTTP/1.1协议本身的很多问题，但还是基于TCP协议，TCP本身的一些特性牺牲了性能，并且由于TCP在目前的网络环境中已经十分普及无法修改所以HTTP/2的性能瓶颈到了TCP身上。并且前面说到为保证传输安全会有TLS层，HTTP/2主要使用的是TLS1.2版本，交换密钥和加密的过程也会造成性能损耗。</p>
+<p>HTTP/3就主要着手于TCP协议和TLS进行了优化：</p>
+<ul>
+<li>TCP -&gt; UDP</li>
+<li>在UDP和HTTP协议之间新增QUIC协议</li>
+<li>TLS1.2 -&gt; TLS1.3</li>
+</ul>
+<p><img src="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/structure.png"></p>
+<h3 id="建立链接"><a href="#建立链接" class="headerlink" title="建立链接"></a>建立链接</h3><p><img src="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/process.png"><br>我们看到通过TCP转化为UDP+QUIC，TLS1.2转化为TLS1.3可以节省2RTT，恢复链接可以实现0RTT直接发送数据。</p>
+<h3 id="QUIC"><a href="#QUIC" class="headerlink" title="QUIC"></a>QUIC</h3><p>QUIC是谷歌提出的一种应用层传输协议,建立在<strong>UDP</strong>之上，摆脱了TCP得一些性能问题，通过自己实现有序、可靠、安全、灵活、快速的传输服务器。</p>
+<blockquote>
+<p>目前，在Chrome中有85%以上关于谷歌自有业务的请求响应都是通过QUIC承载，可以说QUIC已经经受住了真实复杂外网环境的考验。</p>
+</blockquote>
+<h4 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h4><p>QUIC建立连接只需要<strong>1-RTT和0-RTT</strong>，其中初始主要用在信道建立和密钥交换。</p>
+<h5 id="TLS1-3"><a href="#TLS1-3" class="headerlink" title="TLS1.3"></a>TLS1.3</h5><blockquote>
+<p>TLS1.3协议针对安全强化及效率提升等方面进行了大量修改，IETF相继推出个28个草案版本，历时4年多，在2019年8月份完成最终的标准化 (RFC 8446) 。</p>
+</blockquote>
+<p>TLS1.3版本更简练，建立TLS连接不再需要 2RTT，而只需要1 RTT，是因为浏览器第一次就把自己的密钥交换的素材发给服务器，这样就节省了第三次消息，少了0.5个RTT时间。</p>
+<p>TLS1.3用了经典的秘钥加密算法（DH算法）来实现对称秘钥的交换，其中Alice的a和Bob的b是本地生成的<strong>不参与传输</strong>，这样就不会让第三方劫持，只要其中g和p选择的足够大和安全就不存在被劫持的风险。</p>
+<p><img src="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/hxns1tkwgd.png"></p>
+<h5 id="0-RTT"><a href="#0-RTT" class="headerlink" title="0-RTT"></a>0-RTT</h5><p>先前已连接过一个服务器的客户端可能<strong>缓存</strong>来自该连接的某些参数，并在之后与该服务器建立一个无需等待握手完成就可以立即传输信息的0-RTT连接，从而减少建立新连接所必需的时间。</p>
+<h4 id="数据传输"><a href="#数据传输" class="headerlink" title="数据传输"></a>数据传输</h4><p>链接建立的根本是为了传输数据，一个QUIC链接连接后其中会有很多的流，每个流是<strong>独立的</strong>，是一个单独的请求。</p>
+<h5 id="避免队首阻塞"><a href="#避免队首阻塞" class="headerlink" title="避免队首阻塞"></a>避免队首阻塞</h5><p>HTTP/2解决了应用层的队首阻塞问题，但是由于还是建立在TCP链接之上，如果TCP丢了一个包就需要等待，还是会出现队首阻塞问题。HTTP/3抛弃TCP，通过QUIC协议控制。</p>
+<p>客户端和服务器还是会建立一个链接，但是链接里有<strong>多个流</strong>，流的关系是并列的，如果其中一个流丢失了数据并不能影响其他流的传输。</p>
+<p><img src="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/quic-chain-streams.png"></p>
+<h5 id="交付顺序"><a href="#交付顺序" class="headerlink" title="交付顺序"></a>交付顺序</h5><p>TCP是按序交付的，QUIC同样也实现了，但是也有区别，上面说到了同一个QUIC链接中会有很多个流，QUIC保证每个<strong>流内部是按序交付</strong>的，但是不通流之间是<strong>乱序</strong>的。</p>
+<h5 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h5><p>由于UDP是不可靠的协议，所以QUIC在其上层提供了数据包重传、拥塞控制以及其他一些TCP中存在的特性。</p>
+<h5 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h5><p>QUIC的拥塞控制原理和TCP的类似如慢启动、拥塞避免等，但是做出了一定的优化处理。</p>
+<h4 id="挑战"><a href="#挑战" class="headerlink" title="挑战"></a>挑战</h4><p>计算机网络中间有无数个路由器、交换机、NAT等网络设备，这些设备建立初期就已经存在了TCP、UDP等协议，所以对这些协议的特点、特性都有所支持。但新加的协议怎么办？<strong>不可能更新</strong>计算机网络的所有设备，所以明知道TCP有一些性能问题，但是没有人说重新修改TCP协议，这样的代价太大了。</p>
+<p>HTTP/3是建立在UDP协议之上，UDP是无连接的，所以中间各种网络设备都不会记录UDP链接状态，但是QUIC是面向链接的，这样<strong>如何让中间NAT知道当前UDP的连接状态？何时断开连接？</strong>这是它未来的挑战。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://www.mobibrw.com/2020/23190">QUIC的五大特性及外网表现</a><br><a target="_blank" rel="noopener" href="https://http3-explained.haxx.se/zh/zh">HTTP/3 explained</a><br><a target="_blank" rel="noopener" href="https://book.douban.com/subject/25856314/">Web性能权威指南</a></p>
+</div><div class="article-licensing box"><div class="licensing-title"> <p><a href="http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">http://wangzyer.github.io/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Wangzyer</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-01-06</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-01-06</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags size-small mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><!--!--></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/"><span class="level-item"> </span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="/img/cat.png" alt="Wangzyer"></figure><p class="title is-size-4 is-block line-height-inherit">Wangzyer</p><p class="is-size-6 is-block">Web Developer</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>HangZhou China</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">7</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">3</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">9</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/wangzyer" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/wangzyer"><i class="fab fa-github"></i></a></div></div></div><!--!--><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/%E5%9F%BA%E7%A1%80/"><span class="level-start"><span class="level-item">基础</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><span class="level-start"><span class="level-item">读书笔记</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E8%BF%9B%E9%98%B6/"><span class="level-start"><span class="level-item">进阶</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/ES7/"><span class="tag">ES7</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/chrome/"><span class="tag">chrome</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/javascript/"><span class="tag">javascript</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E4%B8%9A%E5%8A%A1%E5%AE%9E%E6%88%98/"><span class="tag">业务实战</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><span class="tag">性能优化</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%B8%B8%E8%A7%88%E5%99%A8/"><span class="tag">游览器</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/"><span class="tag">源码解析</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%BD%91%E7%BB%9C/"><span class="tag">网络</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"><span class="tag">计算机网络</span><span class="tag is-grey-lightest">2</span></a></div></div></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.jpeg" alt="Wangzyer" height="28"></a><p class="size-small"><span>&copy; 2021 Wangzyer</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/wangzyer"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

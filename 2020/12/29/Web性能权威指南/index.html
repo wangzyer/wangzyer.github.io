@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Wangzyer</title><meta description="读书笔记 - Web性能权威指南本书的目标是涵盖开发者应该掌握的所有网络知识：网络开发中用到的协议有哪些，这些协议有哪些局限性、如何针对底层网络优化自己的应用、游览器提供了那些网络相关功能，以及我们什么时候用到他们。"><meta property="og:type" content="blog"><meta property="og:title" content="Wangzyer"><meta property="og:url" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/"><meta property="og:site_name" content="Wangzyer"><meta property="og:description" content="读书笔记 - Web性能权威指南本书的目标是涵盖开发者应该掌握的所有网络知识：网络开发中用到的协议有哪些，这些协议有哪些局限性、如何针对底层网络优化自己的应用、游览器提供了那些网络相关功能，以及我们什么时候用到他们。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/1.png"><meta property="og:image" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/2.png"><meta property="og:image" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3042.png"><meta property="og:image" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3041.png"><meta property="og:image" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3040.png"><meta property="og:image" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3045.png"><meta property="og:image" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3046.png"><meta property="og:image" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/3.png"><meta property="og:image" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/4.png"><meta property="article:published_time" content="2020-12-28T16:00:00.000Z"><meta property="article:modified_time" content="2021-01-06T12:08:00.195Z"><meta property="article:author" content="Wangzyer"><meta property="article:tag" content="性能优化"><meta property="article:tag" content="网络"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/1.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/"},"headline":"Wangzyer","image":["http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/1.png","http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/2.png","http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3042.png","http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3041.png","http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3040.png","http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3045.png","http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3046.png","http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/3.png","http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/4.png"],"datePublished":"2020-12-28T16:00:00.000Z","dateModified":"2021-01-06T12:08:00.195Z","author":{"@type":"Person","name":"Wangzyer"},"description":"读书笔记 - Web性能权威指南本书的目标是涵盖开发者应该掌握的所有网络知识：网络开发中用到的协议有哪些，这些协议有哪些局限性、如何针对底层网络优化自己的应用、游览器提供了那些网络相关功能，以及我们什么时候用到他们。"}</script><link rel="canonical" href="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.13.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.jpeg" alt="Wangzyer" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/wangzyer"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-12-28T16:00:00.000Z" title="2020-12-28T16:00:00.000Z">2020-12-29</time>发表</span><span class="level-item"><time dateTime="2021-01-06T12:08:00.195Z" title="2021-01-06T12:08:00.195Z">2021-01-06</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a></span><span class="level-item">1 小时读完 (大约8262个字)</span></div></div><h1 class="title is-3 is-size-4-mobile"> </h1><div class="content"><h1 id="读书笔记-Web性能权威指南"><a href="#读书笔记-Web性能权威指南" class="headerlink" title="读书笔记 - Web性能权威指南"></a>读书笔记 - Web性能权威指南</h1><p>本书的目标是涵盖开发者应该掌握的所有网络知识：网络开发中用到的协议有哪些，这些协议有哪些局限性、如何针对底层网络优化自己的应用、游览器提供了那些网络相关功能，以及我们什么时候用到他们。</p>
+<a id="more"></a> 
+<h3 id="第一章-延迟与带宽"><a href="#第一章-延迟与带宽" class="headerlink" title="第一章 延迟与带宽"></a>第一章 延迟与带宽</h3><p>网络通信决定性的两个因素就是延迟和带宽：</p>
+<ul>
+<li>延迟：分组从消息源发送到目的地所需要的时间</li>
+<li>带宽：逻辑或物理通信最大吞吐量</li>
+</ul>
+<h4 id="延迟"><a href="#延迟" class="headerlink" title="延迟"></a>延迟</h4><h5 id="延迟的组成"><a href="#延迟的组成" class="headerlink" title="延迟的组成"></a>延迟的组成</h5><ul>
+<li>传播延迟：消息从发送端到接收端所需要的时间</li>
+<li>传输延迟：把消息中所有比特转移到链路中所需要的时间</li>
+<li>排队延迟：到来分组排队等待处理的时间</li>
+<li>处理延迟：处理分组首部、检查错误以及确认分组目标所用的时间</li>
+</ul>
+<h5 id="光速与传播延迟"><a href="#光速与传播延迟" class="headerlink" title="光速与传播延迟"></a>光速与传播延迟</h5><p>光速在真空中传播速度：30万公里每秒，光纤折射率为1.5左右，接近20万公里每秒。赤道周长往返需要160ms；</p>
+<h5 id="最后一公里"><a href="#最后一公里" class="headerlink" title="最后一公里"></a>最后一公里</h5><p>延迟中相当大的一部分往往花在最后几公里，并不是横跨大西洋产生的。由于网络接入方式五花八门，往往花费数十毫秒才能到啊ISP的主路由器。</p>
+<h4 id="带宽"><a href="#带宽" class="headerlink" title="带宽"></a>带宽</h4><p>网络的主干链路几乎都是使用光纤来传输的，但是接入网络就很多常见的有光纤入户、电话链路接入、数字链路接入，不同接入方式之间速度相差很多，实际带宽还由运营商商业化的区分决定。</p>
+<h3 id="第二章-TCP的构成"><a href="#第二章-TCP的构成" class="headerlink" title="第二章 TCP的构成"></a>第二章 TCP的构成</h3><p>TCP负责在不可靠的传输信道上提供可靠的抽象层</p>
+<h5 id="措施"><a href="#措施" class="headerlink" title="措施"></a>措施</h5><ul>
+<li>三次握手：SYN、SYN ACK 、ACK</li>
+<li>四次挥手：不影响用户体验</li>
+<li>数据完整性、顺序：分组id、校验和</li>
+<li>流量控制：慢启动、控制拥塞窗口、控制接收窗口</li>
+<li>丢失重发</li>
+</ul>
+<h5 id="针对TCP的优化"><a href="#针对TCP的优化" class="headerlink" title="针对TCP的优化"></a>针对TCP的优化</h5><ul>
+<li>增大TCP初始拥塞窗口：增加初始发送数据是的数量</li>
+<li>慢启动重启</li>
+<li>窗口缩放：可以增大最大接受窗口</li>
+<li>TCP快速打开，在第一个SYN中发送数据</li>
+<li>能少发就少发</li>
+<li>减少传输距离</li>
+<li>重用TCP连接</li>
+</ul>
+<h3 id="第三章-UDP的构成"><a href="#第三章-UDP的构成" class="headerlink" title="第三章 UDP的构成"></a>第三章 UDP的构成</h3><p>用户数据包协议，相比于TCP他的特性就是忽略的那些特性，只提供最简单的封装服务。</p>
+<h5 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h5><ul>
+<li>不保证消息交付</li>
+<li>不保证交付顺序</li>
+<li>不跟踪连接状态</li>
+<li>不需要拥塞控制</li>
+</ul>
+<h4 id="NAT穿透"><a href="#NAT穿透" class="headerlink" title="NAT穿透"></a>NAT穿透</h4><p>由于ipv4地址的不足很多私有网络通过一个转发表来表述 私有ip地址：端口 &lt;-&gt; 共有网络ip地址：端口 来解决ip地址不足的问题。</p>
+<p><img src="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/1.png" alt="076add2faad1d5fb93f42cf7354fe77c"></p>
+<p>对于客户端服务器架构来说，因为服务器地址一般都是共有ip，在交互期间会有必要的转换记录所并不会什么问题，但是对于c2c来说就需要解决NAT穿透问题</p>
+<h5 id="STUN"><a href="#STUN" class="headerlink" title="STUN"></a>STUN</h5><p>一个公网的服务器可以通过它查询私有ip地址：端口 &lt;-&gt; 共有网络ip地址：端口的对应关系。它会发现网络中的地址转化器并进一步取得当前连接分配的外网ip地址和端口。</p>
+<h5 id="TURN"><a href="#TURN" class="headerlink" title="TURN"></a>TURN</h5><p>通过一个中继服务器，两端同时链接中级服务器，然后通过中继服务器转发传数据。时间、金钱成本都很大。</p>
+<h5 id="ICE"><a href="#ICE" class="headerlink" title="ICE"></a>ICE</h5><p>解决方案先通过STUN不行在使用TURN。</p>
+<h4 id="针对UDP的优化"><a href="#针对UDP的优化" class="headerlink" title="针对UDP的优化"></a>针对UDP的优化</h4><ul>
+<li>应用程序必须容忍各种网络路径条件</li>
+<li>应用程序因该控制传输速度</li>
+<li>应用程序用应该对所有流量进行拥塞控制</li>
+<li>应用程序应该使用与TCP相近的带宽</li>
+<li>应用程序应该准备丢包重构发机制</li>
+<li>应用程序应该支持校验和</li>
+<li>应用程序因该处理丢失、重复、重排你                        </li>
+</ul>
+<h3 id="第四章-传输层安全"><a href="#第四章-传输层安全" class="headerlink" title="第四章 传输层安全"></a>第四章 传输层安全</h3><p>TSL用来加密传输数据、认证和完整性检查来保证传输的安全。<br>主要有以下三个服务：</p>
+<ul>
+<li>加密</li>
+<li>身份验证</li>
+<li>完整性</li>
+</ul>
+<h4 id="TSL握手"><a href="#TSL握手" class="headerlink" title="TSL握手"></a>TSL握手</h4><p>TSL采用公共密钥加密需要先握手生成共享密钥，如果使用TCP协议那么在交换数据前的准备需要：1.5 + 3 最多3个来回（TCP握手的第三次会发送密钥请求所以一般来说可以节省1次）。</p>
+<p><img src="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/2.png" alt="7594733d572c97ab2f440f3eefa71e33"></p>
+<h4 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h4><p>通过证书来确定对面是否真正是我想要通信的那个对象，防止中间人攻击。</p>
+<h4 id="针对TLS的优化建议"><a href="#针对TLS的优化建议" class="headerlink" title="针对TLS的优化建议"></a>针对TLS的优化建议</h4><ul>
+<li>减少计算成本</li>
+<li>尽早完成握手</li>
+<li>启用会话缓存与无状态恢复</li>
+<li>调整合适的TLS记录大小</li>
+<li>减少证书链长度，确保其能封装在一个tcp段内</li>
+<li>升级TLS版本</li>
+<li>提升TCP协议性能</li>
+</ul>
+<h3 id="第五章-无线网络概括"><a href="#第五章-无线网络概括" class="headerlink" title="第五章 无线网络概括"></a>第五章 无线网络概括</h3><p>无线网络指任何不用线缆连接的网络，有很多种无线技术，每一种技术都有自己的特点。<br>目前主流的无线技术：Wi-Fi、蓝牙、ZigBee、NFC、WiMAX、LTE、蜂窝等。</p>
+<h4 id="无线网络从使用范围主要分为以下几类"><a href="#无线网络从使用范围主要分为以下几类" class="headerlink" title="无线网络从使用范围主要分为以下几类"></a>无线网络从使用范围主要分为以下几类</h4><ul>
+<li>个人无线局域网（蓝牙、NFC）</li>
+<li>局域网（Wi-Fi）</li>
+<li>城域网（WiMax）</li>
+<li>广域网（蜂窝）</li>
+</ul>
+<p>每一种无线技术的应用场景不同，有些应用需要很高的带宽，有些应用需要很低延迟，以此发展每种网络技术都有自己的技术特点服务于不同应用。</p>
+<h4 id="无线网络性能基础"><a href="#无线网络性能基础" class="headerlink" title="无线网络性能基础"></a>无线网络性能基础</h4><p>所有的无线通信方法都有一个自己的最大信道容量</p>
+<p>计算公式：<strong>C=BW*log2(1+S/N)</strong></p>
+<ul>
+<li>C：信道容量（bit/s）</li>
+<li>BW：可用带宽（HZ）</li>
+<li>S：信号</li>
+<li>N：噪声</li>
+</ul>
+<h5 id="带宽-1"><a href="#带宽-1" class="headerlink" title="带宽"></a>带宽</h5><p>无线通信技术的实现是靠无线波，发送端和接受端需要就使用的频率达成共识。如Wi-Fi都使用2.4～2.5Ghz的频带。</p>
+<p>不同频率特点：</p>
+<ul>
+<li><strong>低频信号</strong> 传输距离远，覆盖范围广，但传输数据少。</li>
+<li><strong>高频信号</strong> 能够传输更多数据，但是距离小，范围小。</li>
+</ul>
+<h5 id="信号强度"><a href="#信号强度" class="headerlink" title="信号强度"></a>信号强度</h5><p>无线传输使用的是共享媒介，所以如果身边很多设备使用同样的信道频率就会出现干扰。提升信道强度的方法提高<strong>信号强度</strong>和<strong>缩短收发两端距离</strong>。</p>
+<h5 id="调制算法"><a href="#调制算法" class="headerlink" title="调制算法"></a>调制算法</h5><p>我们要把数字信号转换成模拟信号（无线电波）。调制就是数模转化的全过程。不同的调制算法效率是不一样的，具体选择取决于可用技术、收发两端计算能力，并且有些高阶的调制算法会提升调制速度但是会降低信号强度。</p>
+<h3 id="第六章-Wi-Fi"><a href="#第六章-Wi-Fi" class="headerlink" title="第六章 Wi-Fi"></a>第六章 Wi-Fi</h3><p>Wi-Fi工作于面许可的ISM频段（不需要得到政府许可 2.4GHz），由于部署简单、设备便宜是当今最流行、应用最广泛的无线技术。</p>
+<h4 id="CSMA-CA"><a href="#CSMA-CA" class="headerlink" title="CSMA/CA"></a>CSMA/CA</h4><p>Wi-Fi工作于共享频段，2.4GHz有3个信道，如何避免信道冲突是通信的关键，Wi-Fi使用的是CSMA/CA冲突避免机制。</p>
+<p>协议主要工作流程如下：<br>1.首先检测信道是否有使用，如果检测出信道空闲，则等待一段随机时间后，才送出数据。<br>2.接收端如果正确收到此帧，则经过一段时间间隔后，向发送端发送确认帧ACK。<br>3.发送端收到ACK帧，确定数据正确传输，在经历一段时间间隔后，再发送数据。</p>
+<h4 id="Wi-Fi标准"><a href="#Wi-Fi标准" class="headerlink" title="Wi-Fi标准"></a>Wi-Fi标准</h4><p>Wi-Fi标准是由IEEE 802标准委员会制定的。目前主流的协议是802.11b和802.11g，更高的标准协议有802.11n和802.11ac更改频率提高带宽（工作在5.0GHz）.</p>
+<h4 id="Wi-Fi性能"><a href="#Wi-Fi性能" class="headerlink" title="Wi-Fi性能"></a>Wi-Fi性能</h4><p>由于Wi-Fi工作在<strong>共享频段</strong>，无法保证只有自己使用，当附近很多人使用时就会导致对信道的瓜分，降低每个使用者的速率，并且由于没有一个规定的中央调度机制，对于任何用户的速率都是无法保证的。</p>
+<h5 id="QoS策略（质量服务）"><a href="#QoS策略（质量服务）" class="headerlink" title="QoS策略（质量服务）"></a>QoS策略（质量服务）</h5><p>QoS可以保证每个客户端某种流量的最大速度，但是由于不是强制每个客户端都需要部署此策略所有对于附近用户的流量无法控制。</p>
+<h5 id="5GHz"><a href="#5GHz" class="headerlink" title="5GHz"></a>5GHz</h5><p>由于目前主流的标准协议是802.11b和802.11g都运行在<strong>2.4GHz</strong>，所以导致这个频率中的信道拥挤，可以使用最新的协议802.11n和802.11ac，他们工作在<strong>5GHz</strong>，由于没有普及所以这个频率中的信道空闲，使用起来速度会提升很多。</p>
+<h3 id="第七章-移动网络"><a href="#第七章-移动网络" class="headerlink" title="第七章 移动网络"></a>第七章 移动网络</h3><p>移动网络是我们目前上面的主要上网手段之一，每个人至少都会有一部移动网络设备，其特点就是可移动设备，与传统pc电脑，对功耗，网络的要求也是不一样的。</p>
+<h4 id="G字号网络"><a href="#G字号网络" class="headerlink" title="G字号网络"></a>G字号网络</h4><p>目前五代移动网络有1G、2G、3G、4G、5G（这本书写的时候还没有5G技术，书中没有相关介绍）。这其中有一段技术的发展历史可以书中查看，最后有两个组织来具体制定通信标准：</p>
+<ul>
+<li>3GPP，负责制定UMTS（3G于GSM技术结合的产物），后来LTE（主要的4G技术）也是这个项目组制定的。</li>
+<li>2GPP2，负责基于CMDA2000制定3G技术规范。</li>
+</ul>
+<h5 id="4G"><a href="#4G" class="headerlink" title="4G"></a>4G</h5><p>所谓4G就是一组具体的数据要求：</p>
+<ul>
+<li>以IP分组交换网络为基础</li>
+<li>与之前的无线标准兼容</li>
+<li>移动客户端速率大袋100Mbit/s</li>
+<li>100ms控制面延迟，10ms用户面延迟</li>
+<li>资源可在用户间动态分配</li>
+<li>可变带宽分配，5～20Mhz</li>
+</ul>
+<p>实际还有更多的要求，所以4G包括现在的5G并不是一个单独的技术，而是通过各种技术达到具体的一些数据要求的技术集合。</p>
+<h4 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h4><p>移动网络不得不提使用主体就是移动设备，移动设备的种类繁多，不同设备由不同的硬件组成，其中有一项是无线基础设施，它决定移动设备能使用哪些网络标准，比如iphonex不支持5G就是因为无线基础设施的不支持。</p>
+<h4 id="无线电资源控制器（RRC）"><a href="#无线电资源控制器（RRC）" class="headerlink" title="无线电资源控制器（RRC）"></a>无线电资源控制器（RRC）</h4><p>无线电资源控制器负责调度协调<strong>设备</strong>与<strong>无线电基站</strong>之间<strong>所有</strong>的<strong>通信连接</strong>。</p>
+<p>使用物理连接时计算机连入网络并始终在线，通信两端可以随时发送数据，Wi-Fi的连入方式也是类似的的，这样会导致两个问题：</p>
+<ul>
+<li>共享信道一直连入，导致冲突的可能性很大。</li>
+<li>因为可以随时和发送接收信号，需要无线电接收发始终开启，从而导致很大的耗电量。</li>
+</ul>
+<p>这两点对于WAN和移动设备问题都是比较明显的，而解决方式就是通过RRC。</p>
+<p>RRC控制移动设备的无线电接收发什么时候开启，带宽多大，功率多少，监听设备的电源状态，一般每个信号塔总都装有RRC。</p>
+<h5 id="LTE-RRC"><a href="#LTE-RRC" class="headerlink" title="LTE RRC"></a>LTE RRC</h5><p>RRC在不同标准中实现方式是不一样的，我们这里通过目前4G的主流标准LTE看看他的实现方式。</p>
+<p>一般设备只有两种状态：</p>
+<ul>
+<li>RRC空闲<br>设备的无线电模块处于低功耗状态，只监听网络的控制信号。</li>
+<li>RRC连接<br>设备的无线电模块处于高功耗状态，要么传输数据，要么接受数据。</li>
+</ul>
+<p>处于空闲状态时用户不能发送和接受数据，如果想要收发数据数据需要向RRC发送一个切换请求，这个过程会有几次往返，其中会有些配置参数包括带宽多大、功率多少等，切换后就与信号塔的连接准备就绪RRC变成连接模式。而且连接后不会切换成空闲模式。</p>
+<p>RRC连接模式需要的功耗很高，但是连接后不会切换回空闲模式，为了节省功耗，连接模式也有很多子状态。</p>
+<ul>
+<li>连续接受<br>网络环境准备就绪、以分配网络资源</li>
+<li>短不连续接受（短DRX）<br>网络环境准备就绪、无分配网络资源</li>
+<li>长不连续接受（长DRX）<br>网络环境准备就绪、无分配网络资源</li>
+</ul>
+<p>连续接受设备可以接受和发送数据。如果设备空闲会被切换成短DRX，网络环境准备就绪但是无法接受和发送资源，只会周期性的监听广播，如果长时间处于空闲则会切换成长DRX。当要发送数据和接收到广播的接受数据信号时会快速切换成连续接受模式。</p>
+<h4 id="运营商架构"><a href="#运营商架构" class="headerlink" title="运营商架构"></a>运营商架构</h4><p>运营网络中的基础设施和架构取决于部署网络属于那一代和什么类型，下面记录了LTE的架构。<br><img src="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3042.png" alt="c0f857f00786814663b020c7d6fc0d18"></p>
+<ul>
+<li>RAN（无线接入网络）<br>负责把用户请求转发到分配好的无线信道，从用户设备接受或者想用户设备发送数据，也就是基站。</li>
+<li>EPC（核心网络）<br>负责数据路由（发送给谁，接收给谁）、账户（匹配）和策略管理（速率、位置等）。也就是把无线网络和公共互联网连接到一起，EPC中有几个核心的模块。<ul>
+<li>PGW<br>负责连接运营商网络和公共网络，维护和分配ip地址、分组过滤和检测、QOS分配、DoS保护。</li>
+<li>PCRF<br>负责维护和评估针对分组网关的规则。</li>
+<li>SWG<br>负责和某个信号塔连接，然后收发数据，这里某个信号塔是通过MME查询的。</li>
+<li>MME<br>接收到SWG发送的查询请求后，会查找用户的位置，返回用户附近信号塔的id给SWG来与其建立连接。</li>
+</ul>
+</li>
+</ul>
+<h4 id="分组流"><a href="#分组流" class="headerlink" title="分组流"></a>分组流</h4><p>数据由流入和流出，对应LET运营商架构分别有出站流和入站流。</p>
+<h5 id="出站流"><a href="#出站流" class="headerlink" title="出站流"></a>出站流</h5><p><img src="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3041.png" alt="805ce69e7e9579104e150013292ce906"><br>1.请求建立RRC连接<br>2.返回控制信息连接网络连接（这个过程会有几次）<br>3.把数据传输到无线信号塔，在转发给网络核心，从SGW发送给PGW<br>4.发送到公共网络</p>
+<h5 id="入站流"><a href="#入站流" class="headerlink" title="入站流"></a>入站流</h5><p><img src="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3040.png" alt="d4ce93cdd366e0e3a36cabb00172ac57"><br>1.公共网络传输到PGW<br>2.发送给SGW，SGW通过MME查询用户信号塔位置。<br>3.通过信号塔广播信号，指定设备接收到信号，建立连接。<br>4.返回建立连接信息<br>5.返回具体信号塔和设备相关信息<br>6.SGW发送数据给指定信号塔。<br>7.信号塔用刚刚连接的连接传输数据。</p>
+<h3 id="第八章-移动网络优化"><a href="#第八章-移动网络优化" class="headerlink" title="第八章 移动网络优化"></a>第八章 移动网络优化</h3><p>针对移动网络和移动设备特点有其独特的优化。</p>
+<h4 id="节约用电"><a href="#节约用电" class="headerlink" title="节约用电"></a>节约用电</h4><ul>
+<li>减少无线电接口使用</li>
+<li>减少无线电唤醒次数。</li>
+</ul>
+<h4 id="消除周期性及无效的数据传输"><a href="#消除周期性及无效的数据传输" class="headerlink" title="消除周期性及无效的数据传输"></a>消除周期性及无效的数据传输</h4><ul>
+<li>轮询在移动网络中代价很高。<br>轮询会使无线电模块无法进入休眠模式或者在连续模式和休眠模式中一直转换。</li>
+<li>使用推送和通知。</li>
+<li>出站和入站请求应该合并和汇总。<br>集中处理数据请求和接受，减少休眠模式的切换。</li>
+<li>非关键性数据推出到无线电模块活动时进行。<br>没有必要为了非关键性数据激活休眠模式。</li>
+</ul>
+<h4 id="爆发性传输数据并转为空闲"><a href="#爆发性传输数据并转为空闲" class="headerlink" title="爆发性传输数据并转为空闲"></a>爆发性传输数据并转为空闲</h4><p>尽可能多的集中下载和上传数据，然后转为空闲模式</p>
+<h3 id="第九章-HTTP简史"><a href="#第九章-HTTP简史" class="headerlink" title="第九章 HTTP简史"></a>第九章 HTTP简史</h3><p>HTTP是互联网上采用最普遍的一种协议。</p>
+<h4 id="HTTP-0-9"><a href="#HTTP-0-9" class="headerlink" title="HTTP 0.9"></a>HTTP 0.9</h4><p>Tim Berners-Lee构建了一个简单HTTP的原型。</p>
+<ul>
+<li>客户端请求是一个ASCII字符串</li>
+<li>客户端请求由一个回车符结尾</li>
+<li>服务器响应是一个ASCII字节流</li>
+<li>服务器响应是一种超文本编辑语言</li>
+<li>连接在文档传输完毕后离开</li>
+</ul>
+<p>HTTP 0.9是HTTP的第一个版本，1991年发布，该版本只有一个get命令，返回没有首部等信息。</p>
+<p>HTTP 0.9实现的功能：</p>
+<ul>
+<li>客户端/服务器、请求/响应协议</li>
+<li>ASCII协议，运行在TCP/IP之上</li>
+<li>传输HTML</li>
+<li>每次请求后会关闭</li>
+</ul>
+<h4 id="HTTP-1-0"><a href="#HTTP-1-0" class="headerlink" title="HTTP 1.0"></a>HTTP 1.0</h4><p>由于人们对新兴Web的需求越来越高，HTTP0.9很多根本性不足的问题暴露出来，1996年，HTTP工作组发布了RFC 1945，解释说明了很多1.0的公共方法，不过它并不是一个正式的互联网规范。</p>
+<p>HTTP 1.0新增的功能：</p>
+<ul>
+<li>请求可以有多行首部字段构成</li>
+<li>响应对象前面添加了一个响应状态</li>
+<li>响应对象由换行符分隔首部字段</li>
+<li>响应对象不局限于HTML</li>
+</ul>
+<h4 id="HTTP-1-1"><a href="#HTTP-1-1" class="headerlink" title="HTTP 1.1"></a>HTTP 1.1</h4><p>1997年由IETF发布HTTP1.0的标准RFC 2068，1996年RFC 2616在标准中增加了改进。<br>HTTP1.1也是我们目前使用最多的HTTP版本，其中需要掌握知识点和新增的功能点很多，通过图解HTTP一书可以学习其中大致的内容。</p>
+<h4 id="HTTP-2"><a href="#HTTP-2" class="headerlink" title="HTTP 2"></a>HTTP 2</h4><p>随着把越来越多的应用部署到Web上，对HTTP的要求也越来越高，HTTP工作组2012开始开发HTTP2,在2015年发布，主要目的是改进传输性能，降低延迟和高吞吐量，并且现有的网站和协议无需修改都可以在HTTP2中跑起来。</p>
+<h3 id="第10章-Web性能要点"><a href="#第10章-Web性能要点" class="headerlink" title="第10章 Web性能要点"></a>第10章 Web性能要点</h3><p>前面分别介绍了通信中各个模块的性能优化，然而一次完整的通信涉及到各个模块，现在转移到更宏观的Web心性能优化。</p>
+<h4 id="交付形式"><a href="#交付形式" class="headerlink" title="交付形式"></a>交付形式</h4><p>目前网页交互的形式主要有以下三种：</p>
+<ul>
+<li>超文本文档</li>
+<li>富媒体网页</li>
+<li>Web应用</li>
+</ul>
+<p>页面的交互形式越来越多样，尤其Web应用的多样和复杂，测量的标准也不仅仅局限于资源加载速度要需要考虑以下问题：</p>
+<ul>
+<li>应用加载过程的里程碑是什么？</li>
+<li>用户第一次交互的时机何在？</li>
+<li>什么交互应该吸引用户参与？</li>
+<li>每个用户的参与及转化率如何？</li>
+</ul>
+<h4 id="剖析现代Web应用"><a href="#剖析现代Web应用" class="headerlink" title="剖析现代Web应用"></a>剖析现代Web应用</h4><p>一个网页现在所请求的资源数量的多样的，多个请求主机和多种资源类型。而网页与客户端安装本地资源不同，每次访问都等于是一次重新的安装，所以网页的性能提升一直是被研究的话题。</p>
+<h5 id="速度、性能与用户期望"><a href="#速度、性能与用户期望" class="headerlink" title="速度、性能与用户期望"></a>速度、性能与用户期望</h5><p>每种应用都有自己特定的需求，这取决于应用场景、用户期望、以及复杂度，但是及时的响应是一个统一的目标。</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>感觉</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0～100ms</td>
+<td>很快</td>
+</tr>
+<tr>
+<td>100～300ms</td>
+<td>有一点点慢</td>
+</tr>
+<tr>
+<td>300～1000ms</td>
+<td>机器在工作</td>
+</tr>
+<tr>
+<td>&gt;1000ms</td>
+<td>干点别的吧</td>
+</tr>
+</tbody></table>
+<p>可以看到在几百毫秒以内响应客户是十分重要的，但是DNS、TCP、TSL等查询和握手的时间就浪费了几百毫秒。</p>
+<h5 id="分析瀑布图"><a href="#分析瀑布图" class="headerlink" title="分析瀑布图"></a>分析瀑布图</h5><p>瀑布图显示了页面加载资源的顺序和每个资源各个阶段的时间，分析瀑布图是性能优化的重要手段。</p>
+<h4 id="性能来源：计算、渲染和网络访问"><a href="#性能来源：计算、渲染和网络访问" class="headerlink" title="性能来源：计算、渲染和网络访问"></a>性能来源：计算、渲染和网络访问</h4><p>Web执行主要有3个任务：获取资源、页面布局和渲染、JavaScript的执行。</p>
+<p>页面性能瓶颈是延迟而不是带宽，性能优化要着重于降低延迟。</p>
+<p><img src="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3045.png" alt="bae4b06f7d63cc76b74bee9104750d00"></p>
+<h4 id="性能度量"><a href="#性能度量" class="headerlink" title="性能度量"></a>性能度量</h4><p>通过游览器 Timing API 获取用户真实数据。<br><img src="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/IMG_3046.png" alt="188e3636801f1a8a1664eadfea137f2e"></p>
+<h4 id="针对游览器的优化建议"><a href="#针对游览器的优化建议" class="headerlink" title="针对游览器的优化建议"></a>针对游览器的优化建议</h4><p>从核心的优化策略可以广泛的分为两类：</p>
+<ul>
+<li>基于文档的优化<br>CSS、js解析管道、优先级安排、资源加载顺序、优先获取主要资源等。</li>
+<li>推测性优化<br>预测用户下一次操作，资源预加载、DNS预解析、预渲染等。2完全111 </li>
+</ul>
+<h3 id="第11章-http1-x"><a href="#第11章-http1-x" class="headerlink" title="第11章 http1.x"></a>第11章 http1.x</h3><p>上面介绍了http的发展史,每个版本的升级都是优化上个版本的性能瓶颈，这一章主要讲述了针对http1.1优化了哪些问题、还存在哪些问题、如果优化这些问题。</p>
+<p>http1.1引入了很多重要特性，以下是比较熟悉的</p>
+<ul>
+<li>持久化连接</li>
+<li>http管道</li>
+<li>分块传输</li>
+<li>更好的缓存机制</li>
+</ul>
+<h4 id="持久化连接的优点"><a href="#持久化连接的优点" class="headerlink" title="持久化连接的优点"></a>持久化连接的优点</h4><p>http是基于tcp的，tcp是面向连接的每次都需要3次握手，假设页面有同一个服务器的两个资源，则需要握手两次，如果在第一次tcp连接后服用则减少了一次握手，这就是持久化连接的优点。在请求同一个服务器资源越多、延迟越高则持就换连接的小则越明显。总结有以下优势</p>
+<ul>
+<li>减少握手次数，降低延迟</li>
+<li>减少tcp慢启用的影响</li>
+<li>减少服务器tcp连接数量</li>
+</ul>
+<h4 id="http管道"><a href="#http管道" class="headerlink" title="http管道"></a>http管道</h4><p>持久化连接复用存在的连接完成多次请求，但是必须发出一个请求并完成响应以后才能继续发送下一个请求，http管道则是在第一个请求之后马上进行第二次的请求发送合并成一个请求，然后在服务器的同一个响应中返回所有资源。<br>管道优势</p>
+<ul>
+<li>两个资源的请求合并成一次往返</li>
+</ul>
+<p>http1.1问题</p>
+<ul>
+<li>队首阻塞</li>
+<li>http1.1无法多路复用，需要等待两个请求全部完成后才能响应</li>
+</ul>
+<h4 id="使用多个tcp连接"><a href="#使用多个tcp连接" class="headerlink" title="使用多个tcp连接"></a>使用多个tcp连接</h4><p>由于http1.0并不支持多路复用，通过持久化连接只能当一个请求完成时复用连接在发送下一个，然而这样太慢了，所以游览器一般会使用多个tcp连接来并行的加载资源，chrome游览器一般是允许统一域名下最多6个tcp连接。</p>
+<h4 id="域名分区"><a href="#域名分区" class="headerlink" title="域名分区"></a>域名分区</h4><p>由于上述的对同一域名下tcp连接数量限制，所以通常对资源请求数量很多的网站会将资源分散在多个不同的域名下。但是这样虽然突破了tcp数量的的限制，却增加了资源发布复杂性，多一次的dns解析。</p>
+<h4 id="连接拼合"><a href="#连接拼合" class="headerlink" title="连接拼合"></a>连接拼合</h4><p>连接：把多个资源类似css、js合并成一个请求资源中。<br>优点：</p>
+<ul>
+<li>减少了http请求数量<br>缺点：</li>
+<li>其中有一个修改则需要重新加载全部资源</li>
+<li>js和css需要全部读取后才能执行，拖延了首次实行的时间</li>
+</ul>
+<p>拼合：把多张图片拼合成一个更大的图片<br>优点：</p>
+<ul>
+<li>减少了http请求数量<br>缺点：</li>
+<li>其中有一个修改则需要重新加载全部资源</li>
+<li>增大了对内存的消耗，只显示部分但内存中读取了所有</li>
+</ul>
+<h4 id="嵌入资源"><a href="#嵌入资源" class="headerlink" title="嵌入资源"></a>嵌入资源</h4><p>将资源内嵌文档中，从而减少请求次数。</p>
+<ul>
+<li>将js、css内嵌到script、style标签中</li>
+<li>将图片转化为base64，会增加资源的体积约30%，适合小资源</li>
+</ul>
+<h3 id="第12章-http2-0"><a href="#第12章-http2-0" class="headerlink" title="第12章 http2.0"></a>第12章 http2.0</h3><p>http2可以使连接更快、更简单、更健壮。上面介绍了很多基于http1.0性能优化的方法，但是这些优化都是本身基于协议问题的优化方法，最后的解决方式还是对协议本身进行优化，http2就解决了上述的大部分问题。</p>
+<p>http2宣言：</p>
+<ul>
+<li>相比于http1.0，用户大多数情况下对延迟的感知要有实质上的、可度量的改进。</li>
+<li>解决队首阻塞</li>
+<li>多路复用</li>
+<li>对http1.1语法语义没有入侵</li>
+<li>可扩展机制</li>
+</ul>
+<h4 id="二进制分帧层"><a href="#二进制分帧层" class="headerlink" title="二进制分帧层"></a>二进制分帧层</h4><p>它定义了如何封装http消息并在客户端与服务器之间传输，类似于tls，将原来以文本的方式分隔成了更小的消息和帧，并对他们采用二进制编码。</p>
+<p><img src="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/3.png" alt="0baa93d2d0938672d1db65bfb41df449"></p>
+<h5 id="二进制分帧格式"><a href="#二进制分帧格式" class="headerlink" title="二进制分帧格式"></a>二进制分帧格式</h5><p>每个帧有32位的首部信息</p>
+<ul>
+<li>16位表示长度</li>
+<li>8位类型，表示如何解释帧其余部分的内容</li>
+<li>8位标志</li>
+</ul>
+<p>根据类型不同可以知道如何解释剩下的内容如DATA：本帧用于传输http消息体，HEADERS: 传输流的首部也代表着一个新流的建立。</p>
+<h4 id="流、消息、帧"><a href="#流、消息、帧" class="headerlink" title="流、消息、帧"></a>流、消息、帧</h4><ul>
+<li>流<br>已建立的连接上的双向字节流</li>
+<li>消息<br>与逻辑消息对用的完整的一系列数据帧</li>
+<li>帧<br>http2通信的最小单位</li>
+</ul>
+<h4 id="多向请求与响应"><a href="#多向请求与响应" class="headerlink" title="多向请求与响应"></a>多向请求与响应</h4><p>在http1.1中想要并行的响应多个请求，只能建立多个tcp连接，而http2通过二进制分帧层则可以在同一个tcp中发送多个资源请求，客户端和服务器可以将多个请求分解成互不影响的帧然后乱序发送，在送达后根据流的ID进行组装，所在发送请求帧的同时也在返回响应帧，实现了请求响应的同时执行。</p>
+<h4 id="请求优先级"><a href="#请求优先级" class="headerlink" title="请求优先级"></a>请求优先级</h4><p>既然可以在同一个tcp中发送很多独立的帧，那么就可以按照某种规则优化发送帧的顺序，也就是优先级。每一个流都可以设置一个31比特的优先值：0最高 2^31-1最低。服务器和客户端则可以根据这个值以最优的方式发送流、消息和帧。</p>
+<h4 id="每个来源一个连接"><a href="#每个来源一个连接" class="headerlink" title="每个来源一个连接"></a>每个来源一个连接</h4><p>http2.0所有同一个域名的来源请求都在同一个tcp连接下传输。</p>
+<h4 id="服务器推送"><a href="#服务器推送" class="headerlink" title="服务器推送"></a>服务器推送</h4><p>http1.1只能一个请求一个响应，http2则实现了一个请求多个响应，服务器可以根据客户端请求内容推测客户端接下来会请求哪些资源然后逐一返回，这样就减少了客户端发送请求的时间。</p>
+<h4 id="首部压缩"><a href="#首部压缩" class="headerlink" title="首部压缩"></a>首部压缩</h4><p>http每次通信的都会携带一些首部信息，用于描述资源和客户端信息，但是这些首部中有很大一部分是重复的例如ua，cookies等，所以http2在服务器客户端各生成了一张首部表，如果本次请求的首部和表的的重复则不发送不然则替换，这样实现了head的压缩。</p>
+<h3 id="第13章-优化应用交付"><a href="#第13章-优化应用交付" class="headerlink" title="第13章 优化应用交付"></a>第13章 优化应用交付</h3><h4 id="经典的优化最佳实践"><a href="#经典的优化最佳实践" class="headerlink" title="经典的优化最佳实践"></a>经典的优化最佳实践</h4><ul>
+<li>减少DNS查找</li>
+<li>重用TCP连接</li>
+<li>减少HTTP重定向</li>
+<li>使用CDN</li>
+<li>去掉不必要资源</li>
+<li>客户端缓存<br>通过首部字段控制客户端缓存</li>
+<li>压缩传输内容<br>开启Gzip、图片格式选择</li>
+<li>消除不必要的请求开销<br>控制cookies大小</li>
+<li>并行处理请求和响应<br>多个tcp连接并行、ttp2、管道技术</li>
+<li>优化协议</li>
+</ul>
+<h3 id="第14章-游览器网络概述"><a href="#第14章-游览器网络概述" class="headerlink" title="第14章 游览器网络概述"></a>第14章 游览器网络概述</h3><p>游览器是web开发中最重要的平台，他其中包括了太多的组件比如进程管理、安全沙箱、js引擎、图形渲染、存储系统、网络机制等。<br>游览器的网络组件外部看可以理解成一个简答的获取机制，内部看却十分复杂有自己的优化、api和服务。</p>
+<p><img src="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/4.png" alt="ab12b7583d30e2a2a74dc03abe1f7fbe"></p>
+<h4 id="连接管理与优化"><a href="#连接管理与优化" class="headerlink" title="连接管理与优化"></a>连接管理与优化</h4><p>运行在游览器的web不会负责网络套接字的生命周期，在游览中会有一个套接字池，同源的请求会放在同一个套接字池中，主流游览器的数量一般都是6个，如果超出这个就需要等待之前的请求响应完成去复用tcp连接。然而具体的连接、复用、断开都不需要web应用开发者去关心，这些全是游览器来做的。</p>
+<p>游览器会对套接字池管理进行优化</p>
+<ul>
+<li>按照优先级发送排队请求</li>
+<li>重用套接字</li>
+<li>预测提前打开套接字</li>
+<li>合适的时间关闭</li>
+<li>优化带宽的分配</li>
+</ul>
+<h4 id="网络安全和沙箱"><a href="#网络安全和沙箱" class="headerlink" title="网络安全和沙箱"></a>网络安全和沙箱</h4><ul>
+<li>连接限制</li>
+<li>请求格式化与响应处理</li>
+<li>同源策略</li>
+</ul>
+<h4 id="资源与客户端状态缓存"><a href="#资源与客户端状态缓存" class="headerlink" title="资源与客户端状态缓存"></a>资源与客户端状态缓存</h4><ul>
+<li>缓存资源</li>
+<li>cookies保存客户端状态</li>
+</ul>
+<h4 id="应用API与协议"><a href="#应用API与协议" class="headerlink" title="应用API与协议"></a>应用API与协议</h4><ul>
+<li>抛出XHR、websocket、WebRTC等API给应用使用。</li>
+</ul>
+<h3 id="第15章-XHR"><a href="#第15章-XHR" class="headerlink" title="第15章 XHR"></a>第15章 XHR</h3><p>XHR是游览器抛出来API，让开发人员通过JS传输数据，是AJAX的核心技术。通过使用这个API很多复杂的网络操作游览器都帮我们实现了，我是只需要专注于业务实现。</p>
+<p>XHR本身有一些功能上写限制：<br>－服务器主动推送<br>－没有流式数据传输的API</p>
+<p>具体XHR API的使用可以看另一篇专门的博客</p>
+<h3 id="第16章-Server-Sent-Events"><a href="#第16章-Server-Sent-Events" class="headerlink" title="第16章 Server-Sent Events"></a>第16章 Server-Sent Events</h3><p>让服务器可以向客户端流式发送文本消息，比如服务器的事实更新和通知。<br>实际上，SSE提供的是一个高效XHR流实现，本质上消息交付是实现了一个HTTP长连接，但是游览器帮我们管理链接、解析消息我们只需要简单的调用API即可，专注于业务。</p>
+<p>具体SSE API的使用可以看另一篇专门的博客（未完成）</p>
+<h3 id="第17章-WebSocket"><a href="#第17章-WebSocket" class="headerlink" title="第17章 WebSocket"></a>第17章 WebSocket</h3><p>WebSocket可以实现客户端与服务器端的双向、基于消息的文本或二进制数据传输，他是游览器中最接近套接字的API。<br>他是游览器中最灵活的一个传输机制，可以让客户端与服务器之间实现基于数据流各种数据格式的传输，并且任何一方可以随时发送数据。</p>
+<p>具体SSE API的使用可以看另一篇专门的博客（未完成）</p>
+<h3 id="第18章-WebRTC"><a href="#第18章-WebRTC" class="headerlink" title="第18章 WebRTC"></a>第18章 WebRTC</h3><p>WebRTC由一组标准、协议和Javascript APIZ组成，实现游览器之间（端到端）的视频、音频以及数据的共享。</p>
+<p>大多数游览器抽象成了3个API</p>
+<ul>
+<li>MediaStream：获取音频和视频流</li>
+<li>RTCPeerConnection：音频和视频数据通信</li>
+<li>RTCDataChannel: 任意数据之间的通信</li>
+</ul>
+<p>具体WebRTC API的使用和详情信息可以看另一篇专门的博客（未完成）</p>
+</div><div class="article-licensing box"><div class="licensing-title"> <p><a href="http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/">http://wangzyer.github.io/2020/12/29/Web%E6%80%A7%E8%83%BD%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Wangzyer</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2020-12-29</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-01-06</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags size-small mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a><a class="link-muted mr-2" rel="tag" href="/tags/%E7%BD%91%E7%BB%9C/">网络</a></div><!--!--></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/01/06/%E6%B7%B1%E5%85%A5HTTP%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><i class="level-item fas fa-chevron-left"></i><span class="level-item"> </span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/11/12/%E8%B7%A8%E5%9F%9F%E5%AD%98%E5%8F%96/"><span class="level-item"> </span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="/img/cat.png" alt="Wangzyer"></figure><p class="title is-size-4 is-block line-height-inherit">Wangzyer</p><p class="is-size-6 is-block">Web Developer</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>HangZhou China</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">7</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">3</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">9</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/wangzyer" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/wangzyer"><i class="fab fa-github"></i></a></div></div></div><!--!--><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/%E5%9F%BA%E7%A1%80/"><span class="level-start"><span class="level-item">基础</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><span class="level-start"><span class="level-item">读书笔记</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E8%BF%9B%E9%98%B6/"><span class="level-start"><span class="level-item">进阶</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/ES7/"><span class="tag">ES7</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/chrome/"><span class="tag">chrome</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/javascript/"><span class="tag">javascript</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E4%B8%9A%E5%8A%A1%E5%AE%9E%E6%88%98/"><span class="tag">业务实战</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><span class="tag">性能优化</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%B8%B8%E8%A7%88%E5%99%A8/"><span class="tag">游览器</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/"><span class="tag">源码解析</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%BD%91%E7%BB%9C/"><span class="tag">网络</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"><span class="tag">计算机网络</span><span class="tag is-grey-lightest">2</span></a></div></div></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.jpeg" alt="Wangzyer" height="28"></a><p class="size-small"><span>&copy; 2021 Wangzyer</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/wangzyer"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
